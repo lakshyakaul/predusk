@@ -6,8 +6,8 @@ This project is a full-stack application that stores a professional profile in a
 
 ## Live URLs
 
-* **Frontend (Static Site):** `[PASTE YOUR FRONTEND RENDER URL HERE]`
-* **Backend (Web Service):** `[PASTE YOUR BACKEND RENDER URL HERE]`
+* **Frontend (Static Site):** `(https://profile-api-frontend.onrender.com/)`
+* **Backend (Web Service):** `(https://profile-api-fpjk.onrender.com/)`
 
 ---
 
