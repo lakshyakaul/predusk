@@ -2,6 +2,7 @@
 
 import express from 'express';
 import { initializeDb } from './database.js'; // Import our new function
+import apiRoutes from './api.js';
 
 // --- DATABASE INITIALIZATION ---
 // We run this function once when the server starts to set up the database.
@@ -13,6 +14,11 @@ initializeDb().catch(err => {
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// --- API Routes ---
+// Mount our API router under the /api path.
+// All routes defined in api.js will now be accessible under /api/...
+app.use('/api', apiRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'API is healthy' });

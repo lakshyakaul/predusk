@@ -5,7 +5,8 @@ import { readFile } from 'fs/promises';
 
 // This function opens a connection to the SQLite database file.
 // If the file doesn't exist, it will be created.
-async function openDb() {
+// added export keyword in step2 coz we need our api to interact with db
+export async function openDb() {
   return open({
     filename: './database.sqlite', // The file path for the database
     driver: sqlite3.Database,
