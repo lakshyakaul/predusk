@@ -1,0 +1,14 @@
+{
+  "name": "predusk",
+  "version": "1.0.0",
+  "description": "assessment-1",
+  "main": "src/index.js",
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^4.19.2",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  }
+}
