@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini's Profile</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1 id="profile-name">Loading...</h1>
+        <p id="profile-email"></p>
+        <div id="profile-links"></div>
+    </header>
+
+    <main>
+        <section class="projects-section">
+            <h2>Projects</h2>
+            <div class="filter-container">
+                <label for="skill-filter">Filter by skill:</label>
+                <input type="text" id="skill-filter" placeholder="e.g., Python, Node.js">
+            </div>
+            <div id="projects-container" class="card-container">
+                </div>
+        </section>
+
+        <section class="skills-section">
+            <h2>Top Skills</h2>
+            <div id="skills-container" class="card-container">
+                </div>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

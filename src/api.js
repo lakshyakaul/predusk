@@ -2,17 +2,13 @@
 import express from 'express';
 import { openDb } from './database.js';
 
-// Create a new router instance
 const router = express.Router();
-
-// Middleware to parse JSON bodies, which we'll need for POST/PUT requests later
 router.use(express.json());
 
 // --- GET /api/profile ---
-// Fetches the complete profile including education and work experience.
+// (This endpoint remains unchanged)
 router.get('/profile', async (req, res) => {
   const db = await openDb();
-  // Promise.all allows us to run all these database queries concurrently
   const [profile, education, work_experience] = await Promise.all([
     db.get('SELECT * FROM profile LIMIT 1'),
     db.all('SELECT * FROM education ORDER BY end_year DESC'),
@@ -27,34 +23,64 @@ router.get('/profile', async (req, res) => {
 });
 
 // --- GET /api/skills ---
-// Fetches all skills from the database.
+// (This endpoint remains unchanged)
 router.get('/skills', async (req, res) => {
   const db = await openDb();
   const skills = await db.all('SELECT * FROM skills ORDER BY name ASC');
   res.json(skills);
 });
 
-// --- GET /api/projects ---
-// Fetches all projects and joins them with their associated skills.
+
+// --- NEW: GET /api/skills/top ---
+// Finds the top skills based on how many projects they are associated with.
+router.get('/skills/top', async (req, res) => {
+    const db = await openDb();
+    const topSkills = await db.all(`
+        SELECT s.id, s.name, s.category, COUNT(ps.project_id) as project_count
+        FROM skills s
+        JOIN project_skills ps ON s.id = ps.skill_id
+        GROUP BY s.id
+        ORDER BY project_count DESC
+        LIMIT 5 -- Get the top 5 skills
+    `);
+    res.json(topSkills);
+});
+
+
+// --- MODIFIED: GET /api/projects?skill=... ---
+// Now supports an optional 'skill' query parameter for filtering.
 router.get('/projects', async (req, res) => {
   const db = await openDb();
-  
-  // This SQL query is more advanced. It does the following:
-  // 1. Selects all columns from the projects table (p.*).
-  // 2. Uses GROUP_CONCAT to combine all skill names for a project into a single comma-separated string.
-  // 3. Joins projects with project_skills and skills tables to link them correctly.
-  // 4. Groups the results by project id to ensure one row per project.
-  const projects = await db.all(`
+  const skillQuery = req.query.skill; // e.g., 'python' from /projects?skill=python
+
+  let query = `
     SELECT
       p.*,
       GROUP_CONCAT(s.name) AS skills
     FROM projects p
     LEFT JOIN project_skills ps ON p.id = ps.project_id
     LEFT JOIN skills s ON ps.skill_id = s.id
-    GROUP BY p.id
-  `);
+  `;
+  const params = [];
 
-  // We split the comma-separated skills string into an array for cleaner JSON.
+  if (skillQuery) {
+    // If a skill is provided, we add a WHERE clause to filter.
+    // We need to find projects whose ID is in the list of projects associated with that skill.
+    query += `
+      WHERE p.id IN (
+        SELECT ps.project_id
+        FROM project_skills ps
+        JOIN skills s ON ps.skill_id = s.id
+        WHERE s.name LIKE ?
+      )
+    `;
+    params.push(`%${skillQuery}%`);
+  }
+
+  query += ` GROUP BY p.id`;
+
+  const projects = await db.all(query, params);
+  
   const projectsWithSkillsArray = projects.map(p => ({
     ...p,
     skills: p.skills ? p.skills.split(',') : []
@@ -64,5 +90,28 @@ router.get('/projects', async (req, res) => {
 });
 
 
-// Export the router so it can be used in our main server file
+// --- NEW: GET /api/search?q=... ---
+// A general search endpoint that looks for a query term in project titles and descriptions.
+router.get('/search', async (req, res) => {
+    const searchTerm = req.query.q;
+
+    if (!searchTerm) {
+        return res.status(400).json({ error: 'Search term "q" is required.' });
+    }
+
+    const db = await openDb();
+    // We use the LIKE operator with '%' wildcards to find matches anywhere in the text.
+    // The `?` syntax is a "parameterized query" that prevents SQL injection attacks.
+    const projects = await db.all(
+        'SELECT * FROM projects WHERE title LIKE ? OR description LIKE ?',
+        [`%${searchTerm}%`, `%${searchTerm}%`]
+    );
+
+    res.json({
+        projects
+        // In a real app, you might also search skills, work experience, etc.
+    });
+});
+
+
 export default router;

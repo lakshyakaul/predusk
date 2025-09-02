@@ -1,0 +1,78 @@
+/* public/style.css */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f7f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+h1, h2 {
+    color: #1a253c;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.projects-section, .skills-section {
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+.filter-container {
+    margin-bottom: 20px;
+}
+
+#skill-filter {
+    padding: 8px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+.card .skills {
+    margin-top: 15px;
+}
+
+.skill-tag {
+    display: inline-block;
+    background-color: #eef2f7;
+    color: #3d5278;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
