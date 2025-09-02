@@ -1,112 +1,131 @@
-// public/app.js
 document.addEventListener('DOMContentLoaded', () => {
-    // The base URL of your API
-    const API_URL = 'http://localhost:3000/api';
+    // --- CONFIGURATION ---
+    const API_URL = 'http://localhost:3000/api'; // Replace with your deployed URL if needed
+    let API_KEY = null; // We will prompt for this when needed
 
-    // --- DOM Element References ---
-    const profileName = document.getElementById('profile-name');
-    const profileEmail = document.getElementById('profile-email');
-    const profileLinks = document.getElementById('profile-links');
+    // --- DOM ELEMENT REFERENCES ---
+    const profileHeader = document.getElementById('profile-header');
     const projectsContainer = document.getElementById('projects-container');
     const skillsContainer = document.getElementById('skills-container');
+    const workContainer = document.getElementById('work-container');
+    const educationContainer = document.getElementById('education-container');
     const skillFilterInput = document.getElementById('skill-filter');
 
-    // --- Data Fetching Functions ---
+    // --- GENERIC API FUNCTIONS ---
+    async function apiRequest(endpoint, method = 'GET', body = null) {
+        const headers = { 'Content-Type': 'application/json' };
+        const config = { method, headers };
 
-    // Fetch the main profile data
-    const fetchProfile = async () => {
-        try {
-            const response = await fetch(`${API_URL}/profile`);
-            const data = await response.json();
-            renderProfile(data);
-        } catch (error) {
-            console.error('Failed to fetch profile:', error);
+        if (body) {
+            config.body = JSON.stringify(body);
         }
-    };
 
-    // Fetch top skills
-    const fetchTopSkills = async () => {
-        try {
-            const response = await fetch(`${API_URL}/skills/top`);
-            const skills = await response.json();
-            renderSkills(skills);
-        } catch (error) {
-            console.error('Failed to fetch top skills:', error);
+        const response = await fetch(`${API_URL}${endpoint}`, config);
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || `API request failed with status ${response.status}`);
         }
+        
+        // Handle 204 No Content for DELETE requests
+        if (response.status === 204) {
+            return null;
+        }
+        
+        return response.json();
     }
 
-    // Fetch projects, optionally filtering by skill
-    const fetchProjects = async (skill = '') => {
-        try {
-            const url = skill ? `${API_URL}/projects?skill=${skill}` : `${API_URL}/projects`;
-            const response = await fetch(url);
-            const projects = await response.json();
-            renderProjects(projects);
-        } catch (error) {
-            console.error('Failed to fetch projects:', error);
-        }
-    };
-
-    // --- Rendering Functions ---
-
-    // Render profile header
-    const renderProfile = (profile) => {
-        profileName.textContent = profile.name;
-        profileEmail.textContent = profile.email;
-        profileLinks.innerHTML = `
-            <a href="${profile.github_url}" target="_blank">GitHub</a> | 
-            <a href="${profile.linkedin_url}" target="_blank">LinkedIn</a> | 
-            <a href="${profile.portfolio_url}" target="_blank">Portfolio</a>
-        `;
-    };
-    
-    // Render top skills
-    const renderSkills = (skills) => {
-        skillsContainer.innerHTML = ''; // Clear existing content
-        skills.forEach(skill => {
-            const skillCard = document.createElement('div');
-            skillCard.className = 'card';
-            skillCard.innerHTML = `<h3>${skill.name}</h3> <p>Used in ${skill.project_count} project(s)</p>`;
-            skillsContainer.appendChild(skillCard);
-        });
-    }
-
-    // Render project cards
-    const renderProjects = (projects) => {
-        projectsContainer.innerHTML = ''; // Clear existing content
-        if (projects.length === 0) {
-            projectsContainer.innerHTML = '<p>No projects found for this skill.</p>';
-            return;
-        }
-        projects.forEach(project => {
-            const projectCard = document.createElement('div');
-            projectCard.className = 'card';
-            projectCard.innerHTML = `
-                <h3>${project.title}</h3>
-                <p>${project.description}</p>
-                <div class="skills">
-                    ${project.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+    // --- RENDER FUNCTIONS ---
+    function renderProfile(profile) {
+        profileHeader.innerHTML = `
+            <div data-id="${profile.id}" class="profile-card">
+                <div class="view-mode">
+                    <h1>${profile.name}</h1>
+                    <p>${profile.email}</p>
+                    <p><a href="${profile.github_url}">GitHub</a> | <a href="${profile.linkedin_url}">LinkedIn</a></p>
                 </div>
-                <p><a href="${project.repo_link}" target="_blank">View on GitHub</a></p>
-            `;
-            projectsContainer.appendChild(projectCard);
-        });
-    };
-
-    // --- Event Listeners ---
+            </div>`;
+    }
     
-    // Use 'keyup' for real-time filtering as the user types
-    skillFilterInput.addEventListener('keyup', (event) => {
-        const searchTerm = event.target.value.trim();
-        fetchProjects(searchTerm);
+    function renderCollection(container, items, type) {
+        container.innerHTML = '';
+        items.forEach(item => container.appendChild(createCard(item, type)));
+    }
+
+    // --- CARD CREATION AND EDITING ---
+    function createCard(item, type) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.id = item.id;
+        card.dataset.type = type;
+        
+        let viewHtml = '';
+        switch(type) {
+            case 'project':
+                const skillsHtml = item.skills && item.skills.length 
+                    ? `<div class="skills-list">Skills: ${item.skills.map(s => `<span>${s}</span>`).join(', ')}</div>` 
+                    : '';
+                viewHtml = `<h3>${item.title}</h3><p>${item.description}</p>${skillsHtml}`;
+                break;
+            case 'skill':
+                viewHtml = `<h3>${item.name}</h3><p>${item.category || ''}</p>`;
+                break;
+            case 'work':
+                viewHtml = `<h3>${item.position} at ${item.company}</h3><p>${item.start_date} - ${item.end_date || 'Present'}</p>`;
+                break;
+            case 'education':
+                viewHtml = `<h3>${item.degree}</h3><p>${item.institution}</p><p>${item.start_year} - ${item.end_year}</p>`;
+                break;
+        }
+
+        card.innerHTML = `
+            <div class="view-mode">${viewHtml}</div>`;
+        return card;
+    }
+
+    // --- EVENT HANDLERS ---
+    function debounce(func, delay) {
+        let timeout;
+        return function(...args) {
+            const context = this;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+
+    const debouncedFilter = debounce(async (skill) => {
+        try {
+            const endpoint = skill ? `/projects?skill=${encodeURIComponent(skill)}` : '/projects';
+            const projects = await apiRequest(endpoint);
+            renderCollection(projectsContainer, projects, 'project');
+        } catch (error) {
+            console.error('Failed to filter projects:', error);
+            projectsContainer.innerHTML = `<p>Error loading projects.</p>`;
+        }
+    }, 300);
+
+    skillFilterInput.addEventListener('input', (e) => {
+        debouncedFilter(e.target.value);
     });
 
-    // --- Initial Data Load ---
-    const loadInitialData = () => {
-        fetchProfile();
-        fetchProjects(); // Load all projects initially
-        fetchTopSkills();
-    };
+    // --- INITIAL DATA LOAD ---
+    async function loadData() {
+        try {
+            const [profileData, projects, skills] = await Promise.all([
+                apiRequest('/profile'),
+                apiRequest('/projects'),
+                apiRequest('/skills')
+            ]);
+            
+            renderProfile(profileData);
+            renderCollection(workContainer, profileData.work_experience, 'work');
+            renderCollection(educationContainer, profileData.education, 'education');
+            renderCollection(projectsContainer, projects, 'project');
+            renderCollection(skillsContainer, skills, 'skill');
+        } catch (error) {
+            document.body.innerHTML = `<p>Failed to load data: ${error.message}</p>`;
+        }
+    }
 
-    loadInitialData();
+    loadData();
 });

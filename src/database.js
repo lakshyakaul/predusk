@@ -42,7 +42,7 @@ async function seedDb(db) {
     // Seed Profile
     db.run(
       `INSERT INTO profile (name, email, github_url, linkedin_url, portfolio_url) VALUES (?, ?, ?, ?, ?)`,
-      'Lakshya Kaul', 'lakshyakaul05@gmail.com', 'https://github.com', 'https://linkedin.com', 'https://deepmind.google/'
+      'Lakshya Kaul', 'lakshyakaul05@gmail.com', 'https://github.com/lakshyakaul', 'https://in.linkedin.com/in/lakshya-kaul-b97299262', 'https://lakshya-kaul-portfolio.netlify.app/'
     ),
     
     // Seed Education
@@ -59,7 +59,7 @@ async function seedDb(db) {
   ]);
 
   // Seed Skills (we need the IDs later)
-  const skills = ['Python', 'JavaScript', 'Node.js', 'SQL', 'React', 'Elixir', 'Spring Boot'];
+  const skills = ['Python', 'JavaScript', 'Node.js', 'SQL', 'React', 'Elixir', 'Spring Boot', 'Java', 'Maven', 'Postman'];
   const skillIds = {};
   for (const skill of skills) {
     const result = await db.run(`INSERT INTO skills (name, category) VALUES (?, ?)`, skill, 'Technology');
@@ -69,16 +69,16 @@ async function seedDb(db) {
   // Seed Projects and link skills
   const projects = [
     {
-      title: 'Code Generation Service',
-      description: 'An API that generates code snippets in multiple languages based on natural language prompts.',
-      repo_link: 'https://github.com/project/codegen',
-      skills: ['Python', 'Natural Language Processing']
+      title: 'TOPSIS algorithm backend implementation',
+      description: 'An API for implementing TOPSIS algorithm based on MCDM i.e. Multi Criteria Decision Making',
+      repo_link: 'https://github.com/lakshyakaul/topsis',
+      skills: ['Java', 'Spring Boot', 'Maven', 'Postman']
     },
     {
       title: 'Portfolio API',
-      description: 'The very API we are building now. A RESTful service to manage and display professional profile data.',
-      repo_link: 'https://github.com/project/portfolio-api',
-      skills: ['JavaScript', 'Node.js', 'SQL', 'Docker']
+      description: 'This project being viewed right now. A RESTful service to manage and display professional profile data.',
+      repo_link: 'https://github.com/lakshyakaul/predusk',
+      skills: ['JavaScript', 'Node.js', 'SQLite', 'Express']
     }
   ];
 

@@ -1,4 +1,4 @@
-/* public/style.css */
+/* General Body Styles */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     line-height: 1.6;
@@ -8,71 +8,106 @@ body {
     padding: 20px;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #ddd;
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Section Styling */
+.content-section {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 h1, h2 {
     color: #1a253c;
+    margin: 0;
 }
 
-a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-.projects-section, .skills-section {
-    max-width: 900px;
-    margin: 40px auto;
-}
-
-.filter-container {
-    margin-bottom: 20px;
-}
-
-#skill-filter {
-    padding: 8px;
-    width: 250px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
+/* Card Layout */
 .card-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
 }
 
 .card {
-    background-color: #fff;
+    background-color: #fcfdff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    position: relative; /* For positioning buttons */
 }
 
-.card h3 {
-    margin-top: 0;
+/* Buttons and Controls */
+.controls {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    gap: 8px;
 }
 
-.card .skills {
-    margin-top: 15px;
+.edit-btn, .save-btn, .cancel-btn, .delete-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+    line-height: 1;
 }
 
-.skill-tag {
-    display: inline-block;
-    background-color: #eef2f7;
-    color: #3d5278;
-    padding: 4px 8px;
+.add-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.add-btn:hover { background-color: #0056b3; }
+.save-btn { color: #28a745; /* Green */ }
+.delete-btn { color: #dc3545; /* Red */ }
+
+/* Edit Mode Styles */
+.card input[type="text"],
+.card textarea {
+    width: 95%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
     border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+.card textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+.card-field {
+    margin-bottom: 10px;
+}
+.card-field label {
+    font-weight: bold;
     font-size: 0.8em;
-    margin-right: 5px;
-    margin-bottom: 5px;
+    color: #555;
+    display: block;
+}
+
+/* Utility */
+.hidden {
+    display: none;
 }

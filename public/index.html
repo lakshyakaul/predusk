@@ -7,29 +7,40 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1 id="profile-name">Loading...</h1>
-        <p id="profile-email"></p>
-        <div id="profile-links"></div>
-    </header>
+    <header id="profile-header" class="card">
+        </header>
 
     <main>
-        <section class="projects-section">
-            <h2>Projects</h2>
-            <div class="filter-container">
-                <label for="skill-filter">Filter by skill:</label>
-                <input type="text" id="skill-filter" placeholder="e.g., Python, Node.js">
+        <section class="content-section">
+            <div class="section-header">
+                <h2>Projects</h2>
             </div>
-            <div id="projects-container" class="card-container">
-                </div>
+            <div class="filter-container">
+                <input type="text" id="skill-filter" placeholder="Filter projects by skill...">
+            </div>
+            <div id="projects-container" class="card-container"></div>
         </section>
 
-        <section class="skills-section">
-            <h2>Top Skills</h2>
-            <div id="skills-container" class="card-container">
-                </div>
+        <section class="content-section">
+            <div class="section-header">
+                <h2>Skills</h2>
+            </div>
+            <div id="skills-container" class="card-container"></div>
         </section>
 
+        <section class="content-section">
+            <div class="section-header">
+                <h2>Work Experience</h2>
+            </div>
+            <div id="work-container" class="card-container"></div>
+        </section>
+
+        <section class="content-section">
+            <div class="section-header">
+                <h2>Education</h2>
+            </div>
+            <div id="education-container" class="card-container"></div>
+        </section>
     </main>
 
     <script src="app.js"></script>

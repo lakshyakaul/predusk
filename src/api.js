@@ -1,4 +1,7 @@
 // src/api.js
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import { openDb } from './database.js';
 
