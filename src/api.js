@@ -5,6 +5,27 @@ import { openDb } from './database.js';
 const router = express.Router();
 router.use(express.json());
 
+// --- AUTHENTICATION MIDDLEWARE ---
+// This function runs before any route that uses it.
+// It checks for a valid "Authorization: Bearer <token>" header.
+const authenticate = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const secretKey = process.env.API_SECRET_KEY;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Unauthorized: Bearer token missing' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (token === secretKey) {
+        next(); // Token is valid, proceed to the next function (the route handler)
+    } else {
+        return res.status(403).json({ message: 'Forbidden: Invalid token' });
+    }
+};
+
+// --- READ-ONLY Endpoints (No Auth Required) ---
+
 // --- GET /api/profile ---
 // (This endpoint remains unchanged)
 router.get('/profile', async (req, res) => {
@@ -113,5 +134,62 @@ router.get('/search', async (req, res) => {
     });
 });
 
+// --- WRITE Endpoints (Auth Required) ---
+
+// POST /api/projects - Create a new project
+// We apply the `authenticate` middleware just for this route.
+router.post('/projects', authenticate, async (req, res) => {
+    const { title, description, repo_link, live_link } = req.body;
+    if (!title || !description) {
+        return res.status(400).json({ message: 'Title and description are required.' });
+    }
+    
+    const db = await openDb();
+    const result = await db.run(
+        'INSERT INTO projects (title, description, repo_link, live_link) VALUES (?, ?, ?, ?)',
+        title, description, repo_link, live_link
+    );
+
+    res.status(201).json({ id: result.lastID, title, description });
+});
+
+// PUT /api/projects/:id - Update an existing project
+router.put('/projects/:id', authenticate, async (req, res) => {
+    const { id } = req.params;
+    const { title, description, repo_link, live_link } = req.body;
+    if (!title || !description) {
+        return res.status(400).json({ message: 'Title and description are required.' });
+    }
+
+    const db = await openDb();
+    const result = await db.run(
+        'UPDATE projects SET title = ?, description = ?, repo_link = ?, live_link = ? WHERE id = ?',
+        title, description, repo_link, live_link, id
+    );
+
+    if (result.changes === 0) {
+        return res.status(404).json({ message: 'Project not found.' });
+    }
+
+    res.json({ id, title, description });
+});
+
+// DELETE /api/projects/:id - Delete a project
+router.delete('/projects/:id', authenticate, async (req, res) => {
+    const { id } = req.params;
+    const db = await openDb();
+
+    // First, delete any skill associations for this project to avoid foreign key errors.
+    await db.run('DELETE FROM project_skills WHERE project_id = ?', id);
+    
+    // Then, delete the project itself.
+    const result = await db.run('DELETE FROM projects WHERE id = ?', id);
+
+    if (result.changes === 0) {
+        return res.status(404).json({ message: 'Project not found.' });
+    }
+
+    res.status(204).send(); // 204 No Content is standard for a successful deletion.
+});
 
 export default router;

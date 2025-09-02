@@ -42,24 +42,24 @@ async function seedDb(db) {
     // Seed Profile
     db.run(
       `INSERT INTO profile (name, email, github_url, linkedin_url, portfolio_url) VALUES (?, ?, ?, ?, ?)`,
-      'Gemini', 'gemini.ai@google.com', 'https://github.com', 'https://linkedin.com', 'https://deepmind.google/'
+      'Lakshya Kaul', 'lakshyakaul05@gmail.com', 'https://github.com', 'https://linkedin.com', 'https://deepmind.google/'
     ),
     
     // Seed Education
     db.run(
         `INSERT INTO education (institution, degree, start_year, end_year) VALUES (?, ?, ?, ?)`,
-        'Google Labs', 'Ph.D. in Large Language Models', 2021, 2023
+        'Manipal University Jaipur', 'B.Tech in Computer Science', 2022, 2026
     ),
 
     // Seed Work Experience
     db.run(
         `INSERT INTO work_experience (company, position, start_date, end_date, description) VALUES (?, ?, ?, ?, ?)`,
-        'Google', 'Senior AI Engineer', '2023-Present', null, 'Developing next-generation AI models and systems.'
+        'DRDO', 'Intern', '2023-05-28', '2023-07-28', 'Spring Boot backend developer'
     ),
   ]);
 
   // Seed Skills (we need the IDs later)
-  const skills = ['Python', 'JavaScript', 'Node.js', 'SQL', 'React', 'Docker', 'Natural Language Processing'];
+  const skills = ['Python', 'JavaScript', 'Node.js', 'SQL', 'React', 'Elixir', 'Spring Boot'];
   const skillIds = {};
   for (const skill of skills) {
     const result = await db.run(`INSERT INTO skills (name, category) VALUES (?, ?)`, skill, 'Technology');

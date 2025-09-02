@@ -4,6 +4,9 @@ import express from 'express';
 import { initializeDb } from './database.js'; // Import our new function
 import cors from 'cors';
 import apiRoutes from './api.js';
+import dotenv from 'dotenv';
+
+dotenv.config(); // Load environment variables from .env file
 
 // --- DATABASE INITIALIZATION ---
 // We run this function once when the server starts to set up the database.
