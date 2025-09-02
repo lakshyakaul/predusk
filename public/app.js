@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- CONFIGURATION ---
-    const API_URL = 'https://profile-api-fpjk.onrender.com/'; // Replace with your deployed URL if needed
+    const API_URL = 'https://profile-api-fpjk.onrender.com/api'; // Replace with your deployed URL if needed
     let API_KEY = null; // We will prompt for this when needed
 
     // --- DOM ELEMENT REFERENCES ---
