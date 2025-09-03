@@ -21,62 +21,62 @@ This project is a full-stack application that stores a professional profile in a
 
 The database consists of several tables to store profile, skills, projects, work, and education data.
 
-`
+
 -- The main profile table for your core information.
-CREATE TABLE profile (
+`CREATE TABLE profile (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     github_url TEXT,
     linkedin_url TEXT,
     portfolio_url TEXT
-);
+);`
 
 -- Table to store your skills.
-CREATE TABLE skills (
+`CREATE TABLE skills (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE NOT NULL,
     category TEXT -- e.g., 'Language', 'Framework', 'Tool'
-);
+);`
 
 -- Table for your projects.
-CREATE TABLE projects (
+`CREATE TABLE projects (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     description TEXT,
     repo_link TEXT,
     live_link TEXT
-);
+);`
 
 -- This is a "join table" to link skills with projects.
 -- A project can have many skills, and a skill can be used in many projects.
-CREATE TABLE project_skills (
+`CREATE TABLE project_skills (
     project_id INTEGER,
     skill_id INTEGER,
     FOREIGN KEY(project_id) REFERENCES projects(id),
     FOREIGN KEY(skill_id) REFERENCES skills(id),
     PRIMARY KEY (project_id, skill_id)
-);
+);`
 
 -- Table for your work history.
-CREATE TABLE work_experience (
+`CREATE TABLE work_experience (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     company TEXT NOT NULL,
     position TEXT NOT NULL,
     start_date TEXT,
     end_date TEXT,
     description TEXT
-);
+);`
 
 -- Table for your education.
-CREATE TABLE education (
+`CREATE TABLE education (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     institution TEXT NOT NULL,
     degree TEXT NOT NULL,
     start_year INTEGER,
     end_year INTEGER
-);
-`
+);`
+
 ---
 
 ## API Endpoints & Sample Requests
