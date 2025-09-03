@@ -1,13 +1,10 @@
-# Profile API & Playground
+# Profile API
 
 This project is a full-stack application that stores a professional profile in a database and exposes it via a RESTful API with a minimal frontend for querying.
 
 ---
 
-## Live URLs
-
-* **Frontend (Static Site):** `(https://profile-api-frontend.onrender.com/)`
-* **Backend (Web Service):** `(https://profile-api-fpjk.onrender.com/)`
+**Live URL** `(https://profile-api-fpjk.onrender.com/)`
 
 ---
 
@@ -42,7 +39,7 @@ CREATE TABLE profile (
 
 ## API Endpoints & Sample Requests
 
-Here are the main endpoints available. Replace `[BASE_URL]` with the live backend URL.
+Here are the main endpoints available. Replace `[BASE_URL]` with `https://profile-api-fpjk.onrender.com/`.
 
 **Get the full profile:**
 ```bash
@@ -105,7 +102,3 @@ curl [BASE_URL]/health
 * Error handling is basic.
 
 ---
-
-## My Resume
-
-[Link to your resume PDF or website here]
